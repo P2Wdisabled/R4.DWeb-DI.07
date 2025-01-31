@@ -9,7 +9,7 @@ use App\Entity\Lego;
 
 class LegoController extends AbstractController
 {
-    #[Route('/home', name: 'home')]
+    #[Route('/', name: 'home')]
     public function home(): Response
     {
         // Création de l'objet Lego
