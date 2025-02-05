@@ -27,10 +27,11 @@ class LegoController extends AbstractController
         return new Response("Achat du Lego avec l'ID : " . $id);
     }
 
-    #[Route('/{collection}', name: 'filter_by_collection', requirements: ['collection' => 'creator|star wars|creator expert'])]
+    #[Route('/{collection}', name: 'filter_by_collection', requirements: ['collection' => 'creator|star_wars|creator_expert'])]
     public function filter(string $collection, LegoService $legoService): Response
     {
         // Récupérer les Legos filtrés par collection
+        $collection = str_replace("_"," ",$collection);
         $legos = $legoService->getLegosByCollection($collection);
 
         // Passer les Legos au template
