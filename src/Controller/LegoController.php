@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\LegoService;
 use App\Entity\Lego;
+use App\Repository\LegoCollectionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Repository\LegoRepository;
 
@@ -30,17 +31,24 @@ class LegoController extends AbstractController
     }
 
     #[Route('/{collection}', name: 'filter_by_collection')]
-    public function filter(string $collection, LegoRepository $legoRepository): Response
-    {
-        // Récupérer les Legos filtrés par collection
-        $collection = str_replace("_"," ",$collection);
-        $legos = $legoRepository->findBy(['collection' => $collection]);
+    public function filter(string $collection, LegoRepository $legoRepository, LegoCollectionRepository $legoCollectionRepository): Response {
+    $collectionName = str_replace("_", " ", $collection);
+    
+    // Récupérer la collection par son nom
+    $legoCollection = $legoCollectionRepository->findOneBy(['name' => $collectionName]);
 
-        // Passer les Legos au template
-        return $this->render('lego.html.twig', [
-            'legos' => $legos,
-        ]);
+    if (!$legoCollection) {
+        throw $this->createNotFoundException("La collection '$collectionName' n'existe pas.");
     }
+
+    // Récupérer les Legos associés à la collection
+    $legos = $legoCollection->getLegos();
+
+    return $this->render('lego.html.twig', [
+        'legos' => $legos,
+    ]);
+}
+
 
     #[Route('/test', name: 'test')]
     public function test(ManagerRegistry $doctrine): Response
@@ -48,7 +56,7 @@ class LegoController extends AbstractController
         // Id fictif si on a un constructeur paramétré
         $lego = new Lego(1234);
         $lego->setName("Un beau Lego");
-        $lego->setCollection("Lego Espace");
+        // $lego->setCollection("Lego Espace");
         $lego->setPrice(59.99);
         $lego->setDescription("le lego le moins chere du mon en proportion Kg/€");
         $lego->setPieces(49570);

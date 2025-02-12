@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\LegoRepository;
+use App\Entity\LegoCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -16,9 +17,6 @@ class Lego
 
     #[ORM\Column(length: 255)]
     private ?string $Name = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $collection = null;
 
     #[ORM\Column]
     private ?float $Price = null;
@@ -34,6 +32,10 @@ class Lego
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
+
+    #[ORM\ManyToOne(targetEntity: LegoCollection::class, inversedBy: 'legos')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?LegoCollection $collection = null;
 
     public function __construct(int $id)
 {
@@ -57,15 +59,14 @@ class Lego
         return $this;
     }
 
-    public function getCollection(): ?string
+    public function getCollection(): ?LegoCollection
     {
         return $this->collection;
     }
 
-    public function setCollection(string $Collection): static
+    public function setCollection(?LegoCollection $collection): static
     {
-        $this->collection = $Collection;
-
+        $this->collection = $collection;
         return $this;
     }
 
