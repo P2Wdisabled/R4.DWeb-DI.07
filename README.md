@@ -13,7 +13,7 @@ Installer les dépendances nécessaires : ouvrez un terminal dans le conteneur "
 
 Vérifiez que vous accédez à votre application: [http://localhost:8787](http://localhost:8787).
 
-## Sauvergarder votre base de données
+## Sauvegarder votre base de données
 Si vous avez accès à la base de données, faites un export depuis phpMyAdmin en cliquant sur la base dans le menu à gauche, puis sur l'onglet "Exporter". Vous pouvez ensuite sauvegarder le fichier avec le nom lego_store.sql dans le répertoire docker/mysql/ de votre projet. De cette manière, si la base de données est vierge, le fichier sera automatiquement chargé et vous retrouverez la base que vous aviez auparavant.
 
 ## Versionner votre travail
@@ -40,6 +40,13 @@ git rebase
 # Mettez à jour le repository sur GitHub
 git push -u
 ```
+
+## Bugs connus
+### Fichiers avec l'extension :Zone.Identifier
+Si votre projet contient un ou plusieurs fichiers avec l'extension :Zone.Identifier, c'est certainement parce que vous avez déplacé des fichiers provenant de votre système de fichiers Windows vers votre distribution Linux.
+Ils ne sont pas utiles, vous pouvez les supprimer avec cette commande : `sudo find . -name "*:Zone.Identifier" -type f -delete`. Le mot de passe est celui du user de votre distribution Linux.
+
+Si vous souhaitez désactiver définitivement la création de ces fichiers, [vous pouvez suivre les instructions juste ici](https://codedesign.fr/snippet/supprimer-fichier-zone-identifier-windows-wsl/).
 
 ## Liens
 [TP1 : Introduction à Symfony](https://docs.google.com/document/d/1p57bF8mDKqiQ3j7rnpXmQ3zNeGixdrL8mB9-7ei4xPw/edit?usp=sharing)
