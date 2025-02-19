@@ -13,14 +13,20 @@
         {% endblock %}
     </head>
     <body>
-        <nav>
-            <a href="/">Tous</a> |
-            <a href="/creator">Creator</a> |
-            <a href="/star_wars">Star Wars</a> |
-            <a href="/creator_expert">Creator Expert</a>
-        </nav>
+    <header>
+    <div class="login-info">
+        {% if app.user %}
+            Bonjour, {{ app.user.email }} !
+            <a href="{{ path('lego_store_logout') }}">Déconnexion</a>
+        {% else %}
+            <a href="{{ path('lego_store_login') }}">Se connecter</a>
+        {% endif %}
+    </div>
+</header>
 
-        {% block body %}
-        {% endblock %}
+    <main>
+    
+        {% block body %}{% endblock %}
+    </main>
     </body>
 </html>

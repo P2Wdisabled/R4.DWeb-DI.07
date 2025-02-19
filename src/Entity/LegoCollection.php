@@ -15,6 +15,9 @@ class LegoCollection
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $premiumOnly = false;  // false par défaut
+
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
@@ -52,6 +55,18 @@ class LegoCollection
 
         return $this;
     }
+
+    public function isPremiumOnly(): bool
+    {
+        return $this->premiumOnly;
+    }
+
+    public function setPremiumOnly(bool $premiumOnly): self
+    {
+        $this->premiumOnly = $premiumOnly;
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

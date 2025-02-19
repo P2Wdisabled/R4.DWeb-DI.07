@@ -135,6 +135,15 @@
 	 border-radius: 11px;
 }
 
+.login-info {
+    margin-bottom: 20px; /* Ou la valeur de votre choix */
+}
+
+.main-nav a {
+    margin-right: 10px;  /* Pour séparer les liens */
+}
+
+
  @media screen and (min-width: 768px) {
 	 .lego_header {
 		 width: 65%;
@@ -381,7 +390,7 @@ hr{
 nav
 {
    position: fixed;
-   top: 0px;
+   top: 20px;
    padding: 2em;
 }
 

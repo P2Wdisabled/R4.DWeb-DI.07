@@ -3,6 +3,13 @@
 {% block title %}Liste des Legos{% endblock %}
 
 {% block body %}
+
+    <nav class="main-nav">
+        <a href="/">Tous</a> |
+        <a href="/creator">Creator</a> |
+        <a href="/star_wars">Star Wars</a> |
+        <a href="/creator_expert">Creator Expert</a>
+    </nav>
 <div class="lego_store">
     {% for lego in legos %}
         <div class="lego_card">

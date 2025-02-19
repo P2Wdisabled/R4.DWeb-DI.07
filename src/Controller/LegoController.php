@@ -10,18 +10,50 @@ use App\Entity\Lego;
 use App\Repository\LegoCollectionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Repository\LegoRepository;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LegoController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function home(LegoRepository $legoRepository): Response
-    {
+public function home(LegoRepository $legoRepository): Response
+{
+    // Vérifier si l'utilisateur est connecté
+    if (!$this->getUser()) {
+        // Si NON connecté : on récupère seulement les legos non-Premium
+        $legos = $legoRepository->findByPremium(false);
+    } else {
+        // Si OUI connecté : on récupère tous les legos
         $legos = $legoRepository->findAll();
+        // Ou, si vous voulez aussi filtrer pour n'afficher que les Premium,
+        // faites un autre findByPremium(true). À adapter selon vos besoins.
+    }
 
-        // Passage de l'objet au template
-        return $this->render('lego.html.twig', [
-            'legos' => $legos,
+    return $this->render('lego.html.twig', [
+        'legos' => $legos,
+    ]);
+}
+
+    #[Route('/login', name: 'lego_store_login')]
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {
+        // Récupère les potentielles erreurs de login
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // Récupère le dernier email saisi par l’utilisateur
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error
         ]);
+    }
+
+    #[Route('/logout', name: 'lego_store_logout')]
+    public function logout()
+    {
+        // Ce code ne sera *jamais* exécuté : 
+        // le SecurityBundle intercepte la requête et gère la déconnexion
+        throw new \LogicException('Cette méthode peut rester vide, '.
+            'elle sera interceptée par la clé logout du firewall.');
     }
 
     #[Route('/buy/{id}', name: 'buy')]
@@ -36,6 +68,11 @@ class LegoController extends AbstractController
     
     // Récupérer la collection par son nom
     $legoCollection = $legoCollectionRepository->findOneBy(['name' => $collectionName]);
+
+    if ($legoCollection->isPremiumOnly() && !$this->getUser()) {
+        // Rediriger ou throw 403
+        return $this->redirectToRoute('lego_store_login');
+    }
 
     if (!$legoCollection) {
         throw $this->createNotFoundException("La collection '$collectionName' n'existe pas.");
@@ -69,5 +106,7 @@ class LegoController extends AbstractController
 
         dd($lego);  // Affiche le contenu de l’objet pour vérification
     }
+
+    
 
 }
