@@ -390,8 +390,13 @@ hr{
 nav
 {
    position: fixed;
-   top: 20px;
+   top: 0px;
    padding: 2em;
+}
+
+form {
+	margin-top: 150px;
+	margin-left: 30vw;
 }
 
 nav a {
