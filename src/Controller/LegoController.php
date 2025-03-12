@@ -14,24 +14,26 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LegoController extends AbstractController
 {
-    #[Route('/', name: 'home')]
-public function home(LegoRepository $legoRepository): Response
+#[Route('/', name: 'home')]
+public function home(LegoRepository $legoRepository, LegoCollectionRepository $legoCollectionRepository): Response
 {
-    // Vérifier si l'utilisateur est connecté
     if (!$this->getUser()) {
-        // Si NON connecté : on récupère seulement les legos non-Premium
+        // Si l'utilisateur n'est pas connecté, on récupère uniquement les legos non premium
         $legos = $legoRepository->findByPremium(false);
     } else {
-        // Si OUI connecté : on récupère tous les legos
+        // Si connecté, on récupère tous les legos
         $legos = $legoRepository->findAll();
-        // Ou, si vous voulez aussi filtrer pour n'afficher que les Premium,
-        // faites un autre findByPremium(true). À adapter selon vos besoins.
     }
 
+    // Récupérer toutes les collections
+    $collections = $legoCollectionRepository->findAll();
+
     return $this->render('lego.html.twig', [
-        'legos' => $legos,
+        'legos'       => $legos,
+        'collections' => $collections,
     ]);
 }
+
 
     #[Route('/login', name: 'lego_store_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response

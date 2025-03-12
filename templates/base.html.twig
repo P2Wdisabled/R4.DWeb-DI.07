@@ -23,13 +23,18 @@
             <a href="{{ path('lego_store_login') }}">Se connecter</a>
         {% endif %}
     </div>
-        <a href="/">Tous</a> |
-        <a href="/creator">Creator</a> |
-        <a href="/star_wars">Star Wars</a> |
-        <a href="/creator_expert">Creator Expert</a>
-        {% if app.user %}
-            <a href="/premium">Premium</a>
-        {% endif %}
+    {% for collection in collections %}
+        {# On peut utiliser la méthode replace pour transformer les espaces en underscores si nécessaire pour l'URL #}
+            <a href="/{{ collection.name | lower | replace({' ':'_'}) }}">
+                {{ collection.name }}
+            </a>
+    {% endfor %}
+
+{# Affichage conditionnel pour les utilisateurs premium #}
+{% if app.user %}
+    <a href="/premium">Premium</a>
+{% endif %}
+
     </nav>
     
 </header>
