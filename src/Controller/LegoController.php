@@ -20,13 +20,12 @@ public function home(LegoRepository $legoRepository, LegoCollectionRepository $l
     if (!$this->getUser()) {
         // Si l'utilisateur n'est pas connecté, on récupère uniquement les legos non premium
         $legos = $legoRepository->findByPremium(false);
+        $collections = $legoCollectionRepository->findByPremium(false);
     } else {
         // Si connecté, on récupère tous les legos
         $legos = $legoRepository->findAll();
+        $collections = $legoCollectionRepository->findAll();
     }
-
-    // Récupérer toutes les collections
-    $collections = $legoCollectionRepository->findAll();
 
     return $this->render('lego.html.twig', [
         'legos'       => $legos,
@@ -36,15 +35,22 @@ public function home(LegoRepository $legoRepository, LegoCollectionRepository $l
 
 
     #[Route('/login', name: 'lego_store_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, LegoCollectionRepository $legoCollectionRepository): Response
     {
         // Récupère les potentielles erreurs de login
         $error = $authenticationUtils->getLastAuthenticationError();
         // Récupère le dernier email saisi par l’utilisateur
         $lastUsername = $authenticationUtils->getLastUsername();
+        $connected = !$this->getUser();
+        if (!$this->getUser()) {
+            $collections = $legoCollectionRepository->findByPremium(false);
+        } else {
+            $collections = $legoCollectionRepository->findAll();
+        }
 
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
+            'collections' => $collections,
             'error' => $error
         ]);
     }
@@ -81,10 +87,16 @@ public function home(LegoRepository $legoRepository, LegoCollectionRepository $l
     }
 
     // Récupérer les Legos associés à la collection
-    $legos = $legoCollection->getLegos();
+        $legos = $legoCollection->getLegos();
+        if (!$this->getUser()) {
+            $collections = $legoCollectionRepository->findByPremium(false);
+        } else {
+            $collections = $legoCollectionRepository->findAll();
+        }
 
     return $this->render('lego.html.twig', [
-        'legos' => $legos,
+        'legos'       => $legos,
+        'collections' => $collections,
     ]);
 }
 

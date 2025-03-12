@@ -24,16 +24,11 @@
         {% endif %}
     </div>
     {% for collection in collections %}
-        {# On peut utiliser la méthode replace pour transformer les espaces en underscores si nécessaire pour l'URL #}
-            <a href="/{{ collection.name | lower | replace({' ':'_'}) }}">
-                {{ collection.name }}
-            </a>
-    {% endfor %}
+    <a href="/{{ collection.name | lower | replace({' ':'_'}) }}">
+        {{ collection.name }}
+    </a>
+{% endfor %}
 
-{# Affichage conditionnel pour les utilisateurs premium #}
-{% if app.user %}
-    <a href="/premium">Premium</a>
-{% endif %}
 
     </nav>
     

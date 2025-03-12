@@ -15,6 +15,16 @@ class LegoCollectionRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, LegoCollection::class);
     }
+    
+    public function findByPremium(bool $premium): array
+{
+    return $this->createQueryBuilder('l')
+        ->andWhere('l.premiumOnly = :premium')
+        ->setParameter('premium', $premium)
+        ->getQuery()
+        ->getResult();
+}
+
 
     //    /**
     //     * @return LegoCollection[] Returns an array of LegoCollection objects
