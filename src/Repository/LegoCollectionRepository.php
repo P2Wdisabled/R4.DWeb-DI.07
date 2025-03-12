@@ -25,6 +25,15 @@ class LegoCollectionRepository extends ServiceEntityRepository
         ->getResult();
 }
 
+// public function findByPremium(bool $premium): array
+// {
+//     return $this->createQueryBuilder('l')
+//         ->andWhere('l.premiumOnly = :premium')
+//         ->setParameter('premium', $premium)
+//         ->getQuery()
+//         ->getResult();
+// }
+
 
     //    /**
     //     * @return LegoCollection[] Returns an array of LegoCollection objects

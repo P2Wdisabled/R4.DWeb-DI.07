@@ -5,12 +5,11 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Service\LegoService;
 use App\Entity\Lego;
+use App\Entity\LegoCollection;
 use App\Repository\LegoCollectionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Repository\LegoRepository;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LegoController extends AbstractController
 {
@@ -33,61 +32,30 @@ public function home(LegoRepository $legoRepository, LegoCollectionRepository $l
     ]);
 }
 
-
-    #[Route('/login', name: 'lego_store_login')]
-    public function login(AuthenticationUtils $authenticationUtils, LegoCollectionRepository $legoCollectionRepository): Response
-    {
-        // Récupère les potentielles erreurs de login
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // Récupère le dernier email saisi par l’utilisateur
-        $lastUsername = $authenticationUtils->getLastUsername();
-        $connected = !$this->getUser();
-        if (!$this->getUser()) {
-            $collections = $legoCollectionRepository->findByPremium(false);
-        } else {
-            $collections = $legoCollectionRepository->findAll();
-        }
-
-        return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'collections' => $collections,
-            'error' => $error
-        ]);
-    }
-
-    #[Route('/logout', name: 'lego_store_logout')]
-    public function logout()
-    {
-        // Ce code ne sera *jamais* exécuté : 
-        // le SecurityBundle intercepte la requête et gère la déconnexion
-        throw new \LogicException('Cette méthode peut rester vide, '.
-            'elle sera interceptée par la clé logout du firewall.');
-    }
-
     #[Route('/buy/{id}', name: 'buy')]
     public function buy(int $id): Response
     {
         return new Response("Achat du Lego avec l'ID : " . $id);
     }
 
-    #[Route('/{collection}', name: 'filter_by_collection')]
-    public function filter(string $collection, LegoRepository $legoRepository, LegoCollectionRepository $legoCollectionRepository): Response {
-    $collectionName = str_replace("_", " ", $collection);
+    #[Route('/collections/{id}', name: 'filter')]
+    public function filter(LegoCollection $collection, LegoCollectionRepository $legoCollectionRepository): Response 
+    {
+    //$collectionName = str_replace("_", " ", $collection);
     
     // Récupérer la collection par son nom
-    $legoCollection = $legoCollectionRepository->findOneBy(['name' => $collectionName]);
-
-    if ($legoCollection->isPremiumOnly() && !$this->getUser()) {
+    //$legoCollection = $legoCollectionRepository->findOneBy(['name' => $collectionName]);
+    if ($collection->isPremiumOnly() && !$this->getUser()) {
         // Rediriger ou throw 403
         return $this->redirectToRoute('lego_store_login');
     }
 
-    if (!$legoCollection) {
-        throw $this->createNotFoundException("La collection '$collectionName' n'existe pas.");
+    if (!$collection) {
+        throw $this->createNotFoundException("La collection '$collection' n'existe pas.");
     }
 
     // Récupérer les Legos associés à la collection
-        $legos = $legoCollection->getLegos();
+        $legos = $collection->getLegos();
         if (!$this->getUser()) {
             $collections = $legoCollectionRepository->findByPremium(false);
         } else {

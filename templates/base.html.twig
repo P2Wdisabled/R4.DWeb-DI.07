@@ -24,7 +24,7 @@
         {% endif %}
     </div>
     {% for collection in collections %}
-    <a href="/{{ collection.name | lower | replace({' ':'_'}) }}">
+    <a href="/collections/{{ collection.id }}">
         {{ collection.name }}
     </a>
 {% endfor %}
